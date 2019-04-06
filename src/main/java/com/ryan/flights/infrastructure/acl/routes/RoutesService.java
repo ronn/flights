@@ -1,6 +1,7 @@
-package com.ryan.flights.infrastructure.routes;
+package com.ryan.flights.infrastructure.acl.routes;
 
-import com.ryan.flights.infrastructure.ConsumerService;
+import com.ryan.flights.infrastructure.acl.ConsumerService;
+import com.ryan.flights.infrastructure.acl.routes.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.ryan.flights.infrastructure.schedules;
+package com.ryan.flights.infrastructure.acl.schedules.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

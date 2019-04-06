@@ -1,4 +1,4 @@
-package com.ryan.flights.infrastructure.routes;
+package com.ryan.flights.infrastructure.acl.routes.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

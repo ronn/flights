@@ -1,6 +1,6 @@
-package com.ryan.flights.infrastructure;
+package com.ryan.flights.infrastructure.acl;
 
-import com.ryan.flights.infrastructure.routes.Route;
+import com.ryan.flights.infrastructure.acl.routes.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;

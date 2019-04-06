@@ -1,6 +1,7 @@
-package com.ryan.flights.infrastructure.schedules;
+package com.ryan.flights.infrastructure.acl.schedules;
 
-import com.ryan.flights.infrastructure.ConsumerService;
+import com.ryan.flights.infrastructure.acl.ConsumerService;
+import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
