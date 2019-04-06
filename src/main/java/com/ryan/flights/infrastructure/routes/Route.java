@@ -1,4 +1,4 @@
-package com.ryan.flights.domain;
+package com.ryan.flights.infrastructure.routes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
