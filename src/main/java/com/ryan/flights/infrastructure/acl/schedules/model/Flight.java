@@ -2,33 +2,33 @@ package com.ryan.flights.infrastructure.acl.schedules.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Flight {
 
-    private LocalDate number;
-    private LocalDate departureTime;
-    private LocalDate arrivalTime;
+    private String number;
+    private LocalTime departureTime;
+    private LocalTime arrivalTime;
 
     public Flight() {
     }
 
-    public Flight(LocalDate number, LocalDate departureTime, LocalDate arrivalTime) {
+    public Flight(String number, LocalTime departureTime, LocalTime arrivalTime) {
         this.number = number;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
     }
 
-    public LocalDate getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public LocalDate getDepartureTime() {
+    public LocalTime getDepartureTime() {
         return departureTime;
     }
 
-    public LocalDate getArrivalTime() {
+    public LocalTime getArrivalTime() {
         return arrivalTime;
     }
 }

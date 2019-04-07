@@ -8,21 +8,21 @@ import java.util.List;
 public class Day {
 
     private Integer day;
-    private List<Flight> flighs;
+    private List<Flight> flights;
 
     public Day() {
     }
 
     public Day(Integer day, List<Flight> flighs) {
         this.day = day;
-        this.flighs = flighs;
+        this.flights = flighs;
     }
 
     public Integer getDay() {
         return day;
     }
 
-    public List<Flight> getFlighs() {
-        return flighs;
+    public List<Flight> getFlights() {
+        return flights;
     }
 }
