@@ -2,12 +2,12 @@ package com.ryan.flights.api.model;
 
 import java.util.List;
 
-public class Inteconnection {
+public class Interconnection {
 
     private final Integer stops;
     private final List<Leg> legs;
 
-    public Inteconnection(Integer stops, List<Leg> legs) {
+    public Interconnection(Integer stops, List<Leg> legs) {
         this.stops = stops;
         this.legs = legs;
     }
