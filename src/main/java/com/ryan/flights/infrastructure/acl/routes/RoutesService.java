@@ -19,7 +19,7 @@ public class RoutesService {
         this.consumerService = consumerService;
     }
 
-    public List<Route> getValidRoutes(){
+    public List<Route> getRyanAirRoutes(){
         return consumerService.getAllRoutes()
                 .stream()
                 .filter(route -> null == route.getConnectingAirport())
