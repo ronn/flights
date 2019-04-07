@@ -4,7 +4,7 @@ import com.ryan.flights.infrastructure.acl.ConsumerService;
 import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class SchedulesService {
@@ -15,7 +15,18 @@ public class SchedulesService {
         this.consumerService = consumerService;
     }
 
-    public List<Schedule> getSchedules(){
-        return consumerService.consumeService("https://services-api.ryanair.com/locate/3/routes");
+    public Schedule getSchedule(String departure, String arrival, LocalDateTime departureDateTime){
+        return consumerService.consumeService(getUrlSche(departure, arrival, departureDateTime));
+    }
+
+    private String getUrlSche(String departure, String arrival, LocalDateTime departureDateTime) {
+        return "https://services-api.ryanair.com/timtbl/3/schedules/"
+                + departure
+                + "/"
+                + arrival
+                + "/years/"
+                + departureDateTime.getYear()
+                + "/months/"
+                + departureDateTime.getMonthValue();
     }
 }

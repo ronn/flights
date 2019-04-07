@@ -24,12 +24,12 @@ public class ConsumerService {
         return restTemplateBuilder.build();
     }
 
-    public <T> List<T> consumeService(String url){
+    public <T> T consumeService(String url){
         return getRestTemplate()
                 .exchange(
                         url,
                         HttpMethod.GET, null,
-                        new ParameterizedTypeReference<List<T>>() {}
+                        new ParameterizedTypeReference<T>() {}
                 ).getBody();
     }
 
