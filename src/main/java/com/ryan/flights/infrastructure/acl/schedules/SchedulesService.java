@@ -16,7 +16,7 @@ public class SchedulesService {
     }
 
     public Schedule getSchedule(String departure, String arrival, LocalDateTime departureDateTime){
-        return consumerService.consumeService(getUrlSche(departure, arrival, departureDateTime));
+        return consumerService.getSchedule(getUrlSche(departure, arrival, departureDateTime));
     }
 
     private String getUrlSche(String departure, String arrival, LocalDateTime departureDateTime) {

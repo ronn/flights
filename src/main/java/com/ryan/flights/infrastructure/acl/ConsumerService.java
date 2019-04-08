@@ -1,6 +1,7 @@
 package com.ryan.flights.infrastructure.acl;
 
 import com.ryan.flights.infrastructure.acl.routes.model.Route;
+import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -40,6 +41,16 @@ public class ConsumerService {
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<List<Route>>() {}
+                ).getBody();
+    }
+
+    public Schedule getSchedule(String url){
+        return getRestTemplate()
+                .exchange(
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<Schedule>() {}
                 ).getBody();
     }
 }
