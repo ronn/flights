@@ -10,12 +10,12 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 @Service
-public class RoutesService {
+public class RoutesConsumer {
 
     private final ConsumerService consumerService;
 
     @Autowired
-    public RoutesService(ConsumerService consumerService) {
+    public RoutesConsumer(ConsumerService consumerService) {
         this.consumerService = consumerService;
     }
 
