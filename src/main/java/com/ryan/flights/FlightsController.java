@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
@@ -35,13 +36,52 @@ public class FlightsController {
     }
 
     @RequestMapping("/interconnections")
-    public List<Route> prueba(
+    public List<Interconnection> prueba(
                                          @RequestParam("departure") String departureAirport,
                                          @RequestParam("arrival") String arrivalAirport,
                                          @RequestParam("departureDateTime") String departureDateTimeStr,
                                          @RequestParam("arrivalDateTime") String arrivalDateTimeStr
     ){
-        return routesService.getValidRoutes(departureAirport, arrivalAirport);
+        List<List<Route>> validRoutes = routesService.getValidRoutes(departureAirport, arrivalAirport);
+
+        LocalDateTime departureDateTime = LocalDateTime.parse(departureDateTimeStr);
+        LocalDateTime arrivalDateTime = LocalDateTime.parse(arrivalDateTimeStr);
+
+        List<Interconnection> collect = validRoutes.stream()
+                .map(routes -> {
+                    return getLegs(routes, departureDateTime, arrivalDateTime);
+                    /*List<Schedule> legs = */
+
+                    //return new Interconnection(legs);
+                })
+                //.filter(interconnection -> !interconnection.getLegs().isEmpty())
+
+                //.flatMap(List::stream)
+                .collect(toList());
+
+        return collect;
+/*
+
+
+        //Schedule schedule = schedulesService.getSchedule(departureAirport, arrivalAirport, departureDateTime);
+
+        return validRoutes.stream()
+                .map(route -> {
+                    try {
+                        Schedule schedule = schedulesService.getSchedule(departureAirport, route.getAirportTo(), departureDateTime);
+                        List<Leg> legs = schedule.getDays().stream()
+                                .flatMap(day -> day.getFlights().stream()
+                                        .map(flight -> new Leg(route.getAirportFrom(), route.getAirportTo(), departureDateTimeStr, arrivalDateTimeStr))).collect(toList());
+
+                        return new Interconnection(legs);
+
+                        //return new Leg(route.getAirportFrom(), route.getAirportTo(), departureDateTimeStr, arrivalDateTimeStr);
+                    } catch (Exception e) {
+                        System.out.println("Fallo: " + route.getAirportFrom() + " => " + route.getAirportTo());
+                        e.printStackTrace();
+                        return null;
+                    }
+                }).collect(toList());*/
 
  /*       if (getValidRoutes(departureAirport, arrivalAirport).isEmpty()){
             return new ResponseEntity<>(
@@ -50,40 +90,64 @@ public class FlightsController {
             );
         }
 
-        LocalDateTime departureDateTime = LocalDateTime.parse(departureDateTimeStr);
-
-        Schedule schedule = schedulesService.getSchedule(departureAirport, arrivalAirport, departureDateTime);
-
-        LocalDateTime arrivalDateTime = LocalDateTime.parse(arrivalDateTimeStr);
-
         return new ResponseEntity<>(
                 getInterconnections(departureAirport, arrivalAirport, schedule, departureDateTime, arrivalDateTime),
                 HttpStatus.OK
         );*/
     }
 
+    private Interconnection getLegs(List<Route> routes, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
+        System.out.println(routes.size());
+        List<Leg> legs = routes.stream()
+                .map(route -> {
+                    Schedule schedule = schedulesService.getSchedule(
+                            route.getAirportFrom(),
+                            route.getAirportTo(),
+                            departureDateTime
+                    );
+
+                    if (schedule != null) {
+                        return getValidDays(schedule, departureDateTime, arrivalDateTime.toLocalTime(), route)
+                                .stream()
+                                .map(Day::getFlights)
+                                .map(flights -> new Leg(route.getAirportFrom(), route.getAirportTo(), departureDateTime.toString(), arrivalDateTime.toString()))
+                                .collect(toList());
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(toList());
+
+        routes.stream()
+                .map(route -> new Leg(
+                        route.getAirportFrom(), route.getAirportTo(), "Hoy", "Mañana"
+                )).collect(toList());
+
+        return new Interconnection(legs);
+    }
+
     private List<Interconnection> getInterconnections(String departureAirport, String arrivalAirport, Schedule schedule, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
-        return getValidDays(schedule, departureDateTime, arrivalDateTime.toLocalTime())
+        return getValidDays(schedule, departureDateTime, arrivalDateTime.toLocalTime(), null)
                 .stream()
                 .map(day -> build(departureAirport, arrivalAirport, day, schedule.getMonth(), departureDateTime.getYear()))
                 .collect(toList());
     }
 
 
-    private List<Day> getValidDays(Schedule schedule, LocalDateTime departure, LocalTime arrival) {
+    private List<Day> getValidDays(Schedule schedule, LocalDateTime departure, LocalTime arrival, Route route) {
         return schedule
                 .getDays()
                 .stream()
                 .filter(day -> day.getDay().equals(departure.getDayOfMonth()))
-                .filter(getValidDay(departure.toLocalTime(), arrival))
+                .filter(getValidDay(departure.toLocalTime(), arrival, route))
                 .collect(toList());
     }
 
-    private Predicate<Day> getValidDay(LocalTime departure, LocalTime arrival) {
+    private Predicate<Day> getValidDay(LocalTime departure, LocalTime arrival, Route route) {
         return day -> day.getFlights()
                 .stream()
-                .anyMatch(getValidFlight(departure, arrival)
-                );
+                .anyMatch(getValidFlight(departure, arrival));
     }
 
     private Predicate<Flight> getValidFlight(LocalTime departure, LocalTime arrival) {
@@ -97,7 +161,6 @@ public class FlightsController {
 
     private Interconnection build(String departureAirport, String arrivalAirport, Day day, Integer month, Integer year){
         return new Interconnection(
-                day.getFlights().size() - 1,
                 day.getFlights().stream()
                         .map(flight -> buildLeg(
                                 departureAirport,

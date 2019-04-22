@@ -7,8 +7,8 @@ public class Interconnection {
     private final Integer stops;
     private final List<Leg> legs;
 
-    public Interconnection(Integer stops, List<Leg> legs) {
-        this.stops = stops;
+    public Interconnection(List<Leg> legs) {
+        this.stops = legs.size() - 1;
         this.legs = legs;
     }
 
