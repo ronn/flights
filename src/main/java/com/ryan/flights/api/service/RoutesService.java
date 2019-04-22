@@ -24,9 +24,10 @@ public class RoutesService {
 
         List<Route> directRoutes = getDirectRoutes(departure, arrival, ryanAirRoutes);
 
-        directRoutes.addAll(getIndirectRoutes(departure, arrival, ryanAirRoutes));
 
-        return directRoutes;
+        //directRoutes.addAll(getIndirectRoutes(departure, arrival, ryanAirRoutes));
+
+        return getRoutesFromDeparture(departure, ryanAirRoutes);
     }
 
     private List<Route> getDirectRoutes(String departure, String arrival, List<Route> rutasValidas){
@@ -37,9 +38,7 @@ public class RoutesService {
     }
 
     private List<Route> getIndirectRoutes(String departure, String arrival, List<Route> rutasValidas) {
-        List<Route> routesFromDeparture = rutasValidas.stream()
-                .filter(route -> departure.equals(route.getAirportFrom()))
-                .collect(toList());
+        List<Route> routesFromDeparture = getRoutesFromDeparture(departure, rutasValidas);
 
         List<Route> routesToArrival = rutasValidas.stream()
                 .filter(route -> arrival.equals(route.getAirportTo()))
@@ -56,5 +55,11 @@ public class RoutesService {
         collect1.addAll(collect);
 
         return collect1;
+    }
+
+    private List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes) {
+        return validROutes.stream()
+                    .filter(route -> departure.equals(route.getAirportFrom()))
+                    .collect(toList());
     }
 }
