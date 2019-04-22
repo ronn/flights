@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class SchedulesService {
@@ -16,12 +17,12 @@ public class SchedulesService {
         this.consumerService = consumerService;
     }
 
-    public Schedule getSchedule(String departure, String arrival, LocalDateTime departureDateTime){
+    public Optional<Schedule> getSchedule(String departure, String arrival, LocalDateTime departureDateTime){
         try {
-            return consumerService.getSchedule(getUrlSche(departure, arrival, departureDateTime));
+            return Optional.ofNullable(consumerService.getSchedule(getUrlSche(departure, arrival, departureDateTime)));
         }catch (HttpClientErrorException httpcee){
             System.out.println("Schedule for " + departure + " -> " + arrival + " Not found");
-            return null;
+            return Optional.empty();
         }
     }
 
