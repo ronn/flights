@@ -1,13 +1,15 @@
 package com.ryan.flights.api.model;
 
+import java.time.LocalDateTime;
+
 public class Leg {
 
     private final String departureAirport;
     private final String arrivalAirport;
-    private final String departureDateTime;
-    private final String arrivalDateTime;
+    private final LocalDateTime departureDateTime;
+    private final LocalDateTime arrivalDateTime;
 
-    public Leg(String departureAirport, String arrivalAirport, String departureDateTime, String arrivalDateTime) {
+    public Leg(String departureAirport, String arrivalAirport, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
         this.departureAirport = departureAirport;
         this.arrivalAirport = arrivalAirport;
         this.departureDateTime = departureDateTime;
@@ -22,11 +24,11 @@ public class Leg {
         return arrivalAirport;
     }
 
-    public String getDepartureDateTime() {
+    public LocalDateTime getDepartureDateTime() {
         return departureDateTime;
     }
 
-    public String getArrivalDateTime() {
+    public LocalDateTime getArrivalDateTime() {
         return arrivalDateTime;
     }
 }
