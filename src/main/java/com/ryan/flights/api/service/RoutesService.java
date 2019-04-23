@@ -19,15 +19,8 @@ public class RoutesService {
         this.routesConsumer = routesConsumer;
     }
 
-    public List<Route> getValidRoutes(String departure, String arrival) {
-        List<Route> ryanAirRoutes = routesConsumer.getRyanAirRoutes();
-
-        List<Route> directRoutes = getDirectRoutes(departure, arrival, ryanAirRoutes);
-
-
-        //directRoutes.addAll(getIndirectRoutes(departure, arrival, ryanAirRoutes));
-
-        return getRoutesFromDeparture(departure, ryanAirRoutes);
+    public List<Route> getValidRoutes() {
+        return routesConsumer.getRyanAirRoutes();
     }
 
     private List<Route> getDirectRoutes(String departure, String arrival, List<Route> rutasValidas){
@@ -37,29 +30,15 @@ public class RoutesService {
                 .collect(toList());
     }
 
-    private List<Route> getIndirectRoutes(String departure, String arrival, List<Route> rutasValidas) {
-        List<Route> routesFromDeparture = getRoutesFromDeparture(departure, rutasValidas);
-
-        List<Route> routesToArrival = rutasValidas.stream()
-                .filter(route -> arrival.equals(route.getAirportTo()))
-                .collect(toList());
-
-        List<Route> collect = routesFromDeparture.stream()
-                .filter(desde -> routesToArrival.stream().anyMatch(hacia -> hacia.getAirportFrom().equals(desde.getAirportTo())))
-                .collect(toList());
-
-        List<Route> collect1 = routesToArrival.stream()
-                .filter(hacia -> routesFromDeparture.stream().anyMatch(desde -> desde.getAirportTo().equals(hacia.getAirportFrom())))
-                .collect(toList());
-
-        collect1.addAll(collect);
-
-        return collect1;
-    }
-
-    private List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes) {
+    public List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes) {
         return validROutes.stream()
                     .filter(route -> departure.equals(route.getAirportFrom()))
                     .collect(toList());
+    }
+
+    public List<Route> getSecondLegsRoutes(List<Route> validROutes, String departure, String arrival) {
+        return validROutes.stream()
+                .filter(route -> departure.equals(route.getAirportFrom()) && arrival.equals(route.getAirportTo()))
+                .collect(toList());
     }
 }
