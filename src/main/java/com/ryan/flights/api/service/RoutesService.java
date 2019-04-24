@@ -1,51 +1,19 @@
 package com.ryan.flights.api.service;
 
 import com.ryan.flights.api.model.Leg;
-import com.ryan.flights.infrastructure.acl.routes.RoutesConsumer;
 import com.ryan.flights.infrastructure.acl.routes.model.Route;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
+public interface RoutesService {
 
-@Service
-public class RoutesService {
+    List<Route> getValidRoutes();
 
-    private final RoutesConsumer routesConsumer;
+    List<Route> getDirectRoutes(String departure, String arrival, List<Route> rutasValidas);
 
-    @Autowired
-    public RoutesService(RoutesConsumer routesConsumer) {
-        this.routesConsumer = routesConsumer;
-    }
+    List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes);
 
-    List<Route> getValidRoutes() {
-        return routesConsumer.getRyanAirRoutes();
-    }
+    List<Route> getSecondLegsRoutes(List<Route> validROutes, String departure, String arrival);
 
-    public List<Route> getDirectRoutes(String departure, String arrival, List<Route> rutasValidas){
-        return rutasValidas.stream()
-                .filter(route -> route.getAirportTo().equals(arrival))
-                .filter(route -> route.getAirportFrom().equals(departure))
-                .collect(toList());
-    }
-
-    List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes) {
-        return validROutes.stream()
-                    .filter(route -> departure.equals(route.getAirportFrom()))
-                    .collect(toList());
-    }
-
-    List<Route> getSecondLegsRoutes(List<Route> validROutes, String departure, String arrival) {
-        return validROutes.stream()
-                .filter(route -> departure.equals(route.getAirportFrom()) && arrival.equals(route.getAirportTo()))
-                .collect(toList());
-    }
-
-    Boolean routeMatchesDepAndArr(Route route, String arrivalAirport, Leg leg) {
-        return route.getAirportFrom().equals(leg.getArrivalAirport())
-                &&
-                route.getAirportTo().equals(arrivalAirport);
-    }
+    Boolean routeMatchesDepAndArr(Route route, String arrivalAirport, Leg leg);
 }
