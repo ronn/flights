@@ -1,16 +1,13 @@
 package com.ryan.flights;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.BasicConfigurator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class FlightsApplication {
-
-	private static final Logger logger = LoggerFactory.getLogger(FlightsApplication.class);
-
 	public static void main(String[] args) {
+		BasicConfigurator.configure();
 		SpringApplication.run(FlightsApplication.class, args);
 	}
 }
