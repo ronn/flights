@@ -23,7 +23,7 @@ public class RoutesService {
         return routesConsumer.getRyanAirRoutes();
     }
 
-    private List<Route> getDirectRoutes(String departure, String arrival, List<Route> rutasValidas){
+    public List<Route> getDirectRoutes(String departure, String arrival, List<Route> rutasValidas){
         return rutasValidas.stream()
                 .filter(route -> route.getAirportTo().equals(arrival))
                 .filter(route -> route.getAirportFrom().equals(departure))
