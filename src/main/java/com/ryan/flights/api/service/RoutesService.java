@@ -1,5 +1,6 @@
 package com.ryan.flights.api.service;
 
+import com.ryan.flights.api.model.Leg;
 import com.ryan.flights.infrastructure.acl.routes.RoutesConsumer;
 import com.ryan.flights.infrastructure.acl.routes.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class RoutesService {
         this.routesConsumer = routesConsumer;
     }
 
-    public List<Route> getValidRoutes() {
+    List<Route> getValidRoutes() {
         return routesConsumer.getRyanAirRoutes();
     }
 
@@ -30,15 +31,21 @@ public class RoutesService {
                 .collect(toList());
     }
 
-    public List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes) {
+    List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes) {
         return validROutes.stream()
                     .filter(route -> departure.equals(route.getAirportFrom()))
                     .collect(toList());
     }
 
-    public List<Route> getSecondLegsRoutes(List<Route> validROutes, String departure, String arrival) {
+    List<Route> getSecondLegsRoutes(List<Route> validROutes, String departure, String arrival) {
         return validROutes.stream()
                 .filter(route -> departure.equals(route.getAirportFrom()) && arrival.equals(route.getAirportTo()))
                 .collect(toList());
+    }
+
+    Boolean routeMatchesDepAndArr(Route route, String arrivalAirport, Leg leg) {
+        return route.getAirportFrom().equals(leg.getArrivalAirport())
+                &&
+                route.getAirportTo().equals(arrivalAirport);
     }
 }
