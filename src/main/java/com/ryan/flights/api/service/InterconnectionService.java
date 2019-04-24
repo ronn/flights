@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -40,12 +41,32 @@ public class InterconnectionService {
         LocalDateTime departureDateTime = LocalDateTime.parse(departureDateTimeStr);
         LocalDateTime arrivalDateTime = LocalDateTime.parse(arrivalDateTimeStr);
 
-        //TODO routesService.getDirectRoutes(departureAirport, arrivalAirport, validRoutes);
-        return routesService.getRoutesFromDeparture(departureAirport, validRoutes)
+        List<Interconnection> directFlights = getDirectInterconections(departureAirport, arrivalAirport, validRoutes, departureDateTime);
+
+        List<Interconnection> collectedInterconnections = routesService.getRoutesFromDeparture(departureAirport, validRoutes)
                 .stream()
                 .flatMap(route -> getFirstLegs(route, departureDateTime))
+                .filter(leg -> leg.getDepartureDateTime().isAfter(departureDateTime))
                 .filter(firstLeg -> legHasAValidRoute(firstLeg, arrivalAirport, validRoutes))
-                .flatMap(firstLeg -> getNonDirectInterconections( firstLeg, arrivalAirport, departureDateTime, arrivalDateTime))
+                .flatMap(firstLeg -> getNonDirectInterconections(firstLeg, arrivalAirport, departureDateTime, arrivalDateTime))
+                .collect(toList());
+
+        collectedInterconnections.addAll(directFlights);
+
+        return collectedInterconnections;
+    }
+
+    private List<Interconnection> getDirectInterconections(String departureAirport, String arrivalAirport, List<Route> validRoutes, LocalDateTime departureDateTime) {
+        return getDirectLegs(departureAirport, arrivalAirport, validRoutes, departureDateTime)
+                .stream()
+                .map(leg -> new Interconnection(Collections.singletonList(leg)))
+                .collect(toList());
+    }
+
+    private List<Leg> getDirectLegs(String departureAirport, String arrivalAirport, List<Route> validRoutes, LocalDateTime departureDateTime) {
+        return routesService.getDirectRoutes(departureAirport, arrivalAirport, validRoutes)
+                .stream()
+                .flatMap(route -> getFirstLegs(route, departureDateTime))
                 .collect(toList());
     }
 
@@ -91,10 +112,10 @@ public class InterconnectionService {
     private Stream<Leg> mapScheduleToLeg(Route route, LocalDateTime departureDateTime, Schedule schedule) {
         return scheduleService.getValidDaysFirstLeg(schedule, departureDateTime)
                 .stream()
-                .flatMap(day -> flatMapDayToLeg(route, departureDateTime, schedule, day));
+                .flatMap(day -> flatMapDayToLegs(route, departureDateTime, schedule, day));
     }
 
-    private Stream<Leg> flatMapDayToLeg(Route route, LocalDateTime departureDateTime, Schedule schedule, Day day) {
+    private Stream<Leg> flatMapDayToLegs(Route route, LocalDateTime departureDateTime, Schedule schedule, Day day) {
         return day.getFlights()
                 .stream()
                 .map(flight ->
