@@ -2,9 +2,9 @@ package com.ryan.flights.infrastructure.acl.routes;
 
 import com.ryan.flights.infrastructure.acl.ConsumerService;
 import com.ryan.flights.infrastructure.acl.routes.model.Route;
-import com.ryan.flights.infrastructure.acl.schedules.ScheduleConsumer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +22,7 @@ public class RoutesConsumer {
         this.consumerService = consumerService;
     }
 
+    @Cacheable("routes")
     public List<Route> getRyanAirRoutes(){
         LOGGER.info("Fetching routes...");
         List<Route> ryanair = consumerService.getAllRoutes()
