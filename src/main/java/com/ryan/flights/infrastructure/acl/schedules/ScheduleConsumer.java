@@ -27,7 +27,7 @@ public class ScheduleConsumer {
             LOGGER.info("Schedule for " + departure + " -> " + arrival + " Not found");
             return Optional.empty();
         }catch (HttpServerErrorException httpsee){
-            LOGGER.error("ScheduleService not available, try later");
+            LOGGER.error("Schedule web service not available, try later");
             return Optional.empty();
         }
     }
