@@ -32,8 +32,8 @@ public class RoutesServiceImpl implements RoutesService {
                 .collect(toList());
     }
 
-    public List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes) {
-        return validROutes.stream()
+    public List<Route> getRoutesFromDeparture(String departure, List<Route> validRoutes) {
+        return validRoutes.stream()
                     .filter(route -> departure.equals(route.getAirportFrom()))
                     .collect(toList());
     }
