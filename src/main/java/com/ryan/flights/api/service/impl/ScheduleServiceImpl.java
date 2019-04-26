@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -34,19 +35,12 @@ public class ScheduleServiceImpl implements ScheduleService {
         return secondFlightisAfter(leg.getArrivalDateTime().toLocalTime(), flight);
     }
 
-    public List<Day> getValidDaysFirstLeg(Schedule schedule, LocalDateTime departure) {
+    public Stream<Day> getValidDaysFirstLeg(Schedule schedule, LocalDateTime departure) {
         return schedule
                 .getDays()
                 .stream()
                 .filter(day -> isDepartureDay(day, departure))
-                .filter(day -> getValidDayFirstLeg(day, departure.toLocalTime()))
-                .collect(toList());
-    }
-
-    private Boolean getValidDayFirstLeg(Day day, LocalTime departure) {
-        return day.getFlights()
-                .stream()
-                .anyMatch(flight -> getValidFlightByDepartureTime(flight, departure));
+         ;
     }
 
     public List<Day> getValidDaysSecondLeg(Schedule schedule, Leg firstLeg, LocalDateTime arrivalDateTime) {
@@ -66,10 +60,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         return day.getFlights()
                 .stream()
                 .anyMatch(flight -> getValidFlightByArrivalTime(flight, arrivalDateTimeFirstLeg, arrivalEntireTrip));
-    }
-
-    private Boolean getValidFlightByDepartureTime(Flight flight, LocalTime departure) {
-        return !flight.getDepartureTime().isBefore(departure);
     }
 
     private boolean getValidFlightByArrivalTime(Flight flight, LocalTime arrivalTimeFirstLeg, LocalTime arrivalEntireTrip) {
