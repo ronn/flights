@@ -96,7 +96,7 @@ public class InterconnectionServiceImpl implements InterconnectionService{
     private Interconnection getInterconnection(Flight flight, String arrivalAirport, LocalDateTime departureDateTime, Leg firstLeg, Schedule schedule, Day day) {
         return new Interconnection(Arrays.asList(
                 firstLeg,
-                getLegFromFlight(departureDateTime, schedule, day, flight, firstLeg.getArrivalAirport(), arrivalAirport)
+                buildLeg(departureDateTime, schedule, day, flight, firstLeg.getArrivalAirport(), arrivalAirport)
         ));
     }
 
@@ -121,22 +121,10 @@ public class InterconnectionServiceImpl implements InterconnectionService{
     private Stream<Leg> flatMapDayToLegs(Route route, LocalDateTime departureDateTime, Schedule schedule, Day day) {
         return day.getFlights()
                 .stream()
-                .map(flight ->
-                        getLegFromFlight(departureDateTime, schedule, day, flight, route.getAirportFrom(), route.getAirportTo()));
+                .map(flight -> buildLeg(departureDateTime, schedule, day, flight, route.getAirportFrom(), route.getAirportTo()));
     }
 
-    private Leg getLegFromFlight(LocalDateTime departureDateTime, Schedule schedule, Day day, Flight flight, String airportFrom, String airportTo) {
-        return buildLeg(
-                airportFrom,
-                airportTo,
-                departureDateTime,
-                schedule,
-                day,
-                flight
-        );
-    }
-
-    private Leg buildLeg(String airportFrom, String airportTo, LocalDateTime departureDateTime, Schedule schedule, Day day, Flight flight) {
+    private Leg buildLeg(LocalDateTime departureDateTime, Schedule schedule, Day day, Flight flight, String airportFrom, String airportTo) {
         return new Leg(
                 airportFrom,
                 airportTo,
