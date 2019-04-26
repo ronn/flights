@@ -8,6 +8,7 @@ import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface ScheduleService {
 
@@ -15,7 +16,7 @@ public interface ScheduleService {
 
     Boolean isValidSecondFlight(Flight flight, Leg leg);
 
-    List<Day> getValidDaysFirstLeg(Schedule schedule, LocalDateTime departure);
+    Stream<Day> getValidDaysFirstLeg(Schedule schedule, LocalDateTime departure);
 
     List<Day> getValidDaysSecondLeg(Schedule schedule, Leg firstLeg, LocalDateTime arrivalDateTime);
 }
