@@ -49,7 +49,6 @@ public class InterconnectionServiceImpl implements InterconnectionService{
         List<Interconnection> collectedInterconnections = routesService.getRoutesFromDeparture(departureAirport, validRoutes)
                 .stream()
                 .flatMap(route -> getFirstLegs(route, departureDateTime, arrivalDateTime))
-                .filter(leg -> leg.getDepartureDateTime().isAfter(departureDateTime))
                 .filter(firstLeg -> legHasAValidRoute(firstLeg, arrivalAirport, validRoutes))
                 .flatMap(firstLeg -> getNonDirectInterconections(firstLeg, arrivalAirport, departureDateTime, arrivalDateTime))
                 .collect(toList());
@@ -76,35 +75,33 @@ public class InterconnectionServiceImpl implements InterconnectionService{
     private Stream<Interconnection> getNonDirectInterconections(Leg firstLeg, String arrivalAirport, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
         return scheduleService.getSchedule(firstLeg.getArrivalAirport(), arrivalAirport, departureDateTime)
                 .map(schedule ->
-                        mapScheduleToNonDirectInterconnection(schedule, arrivalAirport, departureDateTime, arrivalDateTime, firstLeg))
+                        mapScheduleToNonDirectInterconnection(schedule, arrivalAirport, arrivalDateTime, firstLeg))
                 .orElse(null);
     }
 
-    private Stream<Interconnection> mapScheduleToNonDirectInterconnection(Schedule schedule, String arrivalAirport, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime, Leg firstLeg) {
+    private Stream<Interconnection> mapScheduleToNonDirectInterconnection(Schedule schedule, String arrivalAirport, LocalDateTime arrivalDateTime, Leg firstLeg) {
         return scheduleService.getValidDaysSecondLeg(schedule, firstLeg, arrivalDateTime)
                 .stream()
-                .flatMap(day -> flatDayToInterconnections(day, arrivalAirport, departureDateTime, firstLeg, schedule));
+                .flatMap(day -> flatDayToInterconnections(day, arrivalAirport, firstLeg, schedule));
     }
 
-    private Stream<Interconnection> flatDayToInterconnections(Day day, String arrivalAirport, LocalDateTime departureDateTime, Leg firstLeg, Schedule schedule) {
+    private Stream<Interconnection> flatDayToInterconnections(Day day, String arrivalAirport, Leg firstLeg, Schedule schedule) {
         return day.getFlights()
                 .stream()
-                .filter(flight -> scheduleService.isValidSecondFlight(flight, firstLeg))
-                .filter(flight -> !flight.getDepartureTime().isBefore(departureDateTime.toLocalTime()))
-                .map(flight -> getInterconnection(flight, arrivalAirport, departureDateTime, firstLeg, schedule, day));
+                .map(flight -> getInterconnection(flight, arrivalAirport, firstLeg, schedule, day));
     }
 
-    private Interconnection getInterconnection(Flight flight, String arrivalAirport, LocalDateTime departureDateTime, Leg firstLeg, Schedule schedule, Day day) {
+    private Interconnection getInterconnection(Flight flight, String arrivalAirport, Leg firstLeg, Schedule schedule, Day day) {
         return new Interconnection(Arrays.asList(
                 firstLeg,
-                buildLeg(departureDateTime, schedule, day, flight, firstLeg.getArrivalAirport(), arrivalAirport)
+                buildLeg(firstLeg.getDepartureDateTime(), schedule, day, flight, firstLeg.getArrivalAirport(), arrivalAirport)
         ));
     }
 
     private Boolean legHasAValidRoute(Leg firstLeg, String arrivalAirport, List<Route> validRoutes) {
         return routesService.getSecondLegsRoutes(validRoutes, firstLeg.getArrivalAirport(), arrivalAirport)
                 .stream()
-                .anyMatch(route -> routesService.routeMatchesDepAndArr(route, arrivalAirport, firstLeg));
+                .anyMatch(route -> routesService.routeMatchesDepAndArr(route, firstLeg, arrivalAirport));
     }
 
     private Stream<Leg> getFirstLegs(Route route, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
@@ -122,10 +119,13 @@ public class InterconnectionServiceImpl implements InterconnectionService{
     private Stream<Leg> flatMapDayToLegs(Route route, Schedule schedule, Day day, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
         return day.getFlights()
                 .stream()
-                .filter(flight -> !flight.getDepartureTime().isBefore(departureDateTime.toLocalTime())
-                        && !flight.getArrivalTime().isAfter(arrivalDateTime.toLocalTime())
-                )
+                .filter(flight -> isAValidFlight(departureDateTime, arrivalDateTime, flight))
                 .map(flight -> buildLeg(departureDateTime, schedule, day, flight, route.getAirportFrom(), route.getAirportTo()));
+    }
+
+    private boolean isAValidFlight(LocalDateTime departureDateTime, LocalDateTime arrivalDateTime, Flight flight) {
+        return !flight.getDepartureTime().isBefore(departureDateTime.toLocalTime())
+                && !flight.getArrivalTime().isAfter(arrivalDateTime.toLocalTime());
     }
 
     private Leg buildLeg(LocalDateTime departureDateTime, Schedule schedule, Day day, Flight flight, String airportFrom, String airportTo) {
@@ -133,21 +133,21 @@ public class InterconnectionServiceImpl implements InterconnectionService{
                 airportFrom,
                 airportTo,
                 getOf(
-                        day,
-                        schedule.getMonth(),
                         departureDateTime.getYear(),
+                        schedule.getMonth(),
+                        day,
                         flight.getDepartureTime()
                 ),
                 getOf(
-                        day,
-                        schedule.getMonth(),
                         departureDateTime.getYear(),
+                        schedule.getMonth(),
+                        day,
                         flight.getArrivalTime()
                 )
         );
     }
 
-    private LocalDateTime getOf(Day day, Integer month, Integer year, LocalTime time) {
+    private LocalDateTime getOf(Integer year, Integer month, Day day, LocalTime time) {
         return LocalDateTime.of(
                 year, month, day.getDay(),
                 time.getHour(),
