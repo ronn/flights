@@ -13,7 +13,7 @@ public interface RoutesService {
 
     List<Route> getRoutesFromDeparture(String departure, List<Route> validROutes);
 
-    List<Route> getSecondLegsRoutes(List<Route> validROutes, String departure, String arrival);
+    List<Route> getSecondLegsRoutes(List<Route> validRoutes, String departure, String arrival);
 
-    Boolean routeMatchesDepAndArr(Route route, String arrivalAirport, Leg leg);
+    Boolean routeMatchesDepAndArr(Route route, Leg leg, String arrivalAirport);
 }
