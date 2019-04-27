@@ -38,13 +38,13 @@ public class RoutesServiceImpl implements RoutesService {
                     .collect(toList());
     }
 
-    public List<Route> getSecondLegsRoutes(List<Route> validROutes, String departure, String arrival) {
-        return validROutes.stream()
+    public List<Route> getSecondLegsRoutes(List<Route> validRoutes, String departure, String arrival) {
+        return validRoutes.stream()
                 .filter(route -> departure.equals(route.getAirportFrom()) && arrival.equals(route.getAirportTo()))
                 .collect(toList());
     }
 
-    public Boolean routeMatchesDepAndArr(Route route, String arrivalAirport, Leg leg) {
+    public Boolean routeMatchesDepAndArr(Route route, Leg leg, String arrivalAirport) {
         return route.getAirportFrom().equals(leg.getArrivalAirport())
                 &&
                 route.getAirportTo().equals(arrivalAirport);
