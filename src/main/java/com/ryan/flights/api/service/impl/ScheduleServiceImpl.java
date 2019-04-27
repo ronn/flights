@@ -31,10 +31,6 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleConsumer.getSchedule(departureAirport, arrivalAirport, departureDateTime);
     }
 
-    public Boolean isValidSecondFlight(Flight flight, Leg leg) {
-        return secondFlightisAfter(leg.getArrivalDateTime().toLocalTime(), flight);
-    }
-
     public Stream<Day> getValidDaysFirstLeg(Schedule schedule, LocalDateTime departure) {
         return schedule
                 .getDays()
@@ -73,6 +69,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     private Boolean secondFlightisAfter(LocalTime arrivalTimeFirstLeg, Flight flight) {
-        return flight.getDepartureTime().isAfter(arrivalTimeFirstLeg.plusHours(2));
+        return !flight.getDepartureTime().isBefore(arrivalTimeFirstLeg.plusHours(2));
     }
 }
