@@ -2,13 +2,13 @@ package com.ryan.flights.infrastructure.acl.schedules;
 
 import com.ryan.flights.infrastructure.acl.ConsumerService;
 import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
+import io.vavr.control.Option;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class ScheduleConsumer {
@@ -20,15 +20,15 @@ public class ScheduleConsumer {
         this.consumerService = consumerService;
     }
 
-    public Optional<Schedule> getSchedule(String departure, String arrival, LocalDateTime departureDateTime){
+    public Option<Schedule> getSchedule(String departure, String arrival, LocalDateTime departureDateTime){
         try {
-            return Optional.ofNullable(consumerService.getSchedule(getUrlSche(departure, arrival, departureDateTime)));
+            return Option.of(consumerService.getSchedule(getUrlSche(departure, arrival, departureDateTime)));
         }catch (HttpClientErrorException httpcee){
             LOGGER.info("Schedule for " + departure + " -> " + arrival + " Not found");
-            return Optional.empty();
+            return Option.none();
         }catch (HttpServerErrorException httpsee){
             LOGGER.error("Schedule web service not available, try later");
-            return Optional.empty();
+            return Option.none();
         }
     }
 

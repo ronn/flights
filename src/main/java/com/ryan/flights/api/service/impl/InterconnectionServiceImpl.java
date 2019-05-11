@@ -60,7 +60,7 @@ public class InterconnectionServiceImpl implements InterconnectionService{
         return scheduleService.getSchedule(firstLeg.getArrivalAirport(), arrivalAirport, departureDateTime)
                 .map(schedule ->
                         mapScheduleToNonDirectInterconnection(schedule, arrivalAirport, arrivalDateTime, firstLeg))
-                .orElse(List.empty());
+                .getOrElse(List.empty());
     }
 
     private List<Interconnection> mapScheduleToNonDirectInterconnection(Schedule schedule, String arrivalAirport, LocalDateTime arrivalDateTime, Leg firstLeg) {
@@ -90,7 +90,7 @@ public class InterconnectionServiceImpl implements InterconnectionService{
     private List<Leg> getFirstLegs(Route route, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
         return scheduleService.getSchedule(route.getAirportFrom(), route.getAirportTo(), departureDateTime)
                 .map(schedule -> mapScheduleToLegs(route, schedule, departureDateTime, arrivalDateTime))
-                .orElse(List.empty());
+                .getOrElse(List.empty());
     }
 
     private List<Leg> mapScheduleToLegs(Route route, Schedule schedule, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {

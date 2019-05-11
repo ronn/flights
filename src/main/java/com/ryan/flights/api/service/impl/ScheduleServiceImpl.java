@@ -7,12 +7,12 @@ import com.ryan.flights.infrastructure.acl.schedules.model.Day;
 import com.ryan.flights.infrastructure.acl.schedules.model.Flight;
 import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
 import io.vavr.collection.List;
+import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Optional;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -24,7 +24,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         this.scheduleConsumer = scheduleConsumer;
     }
 
-    public Optional<Schedule> getSchedule(String departureAirport, String arrivalAirport, LocalDateTime departureDateTime) {
+    public Option<Schedule> getSchedule(String departureAirport, String arrivalAirport, LocalDateTime departureDateTime) {
         return scheduleConsumer.getSchedule(departureAirport, arrivalAirport, departureDateTime);
     }
 
