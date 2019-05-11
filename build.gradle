@@ -17,5 +17,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	compile group: 'log4j', name: 'log4j', version: '1.2.17'
-
+	compile group: 'io.vavr', name: 'vavr', version: '0.10.0'
+	compile group: 'io.vavr', name: 'vavr-jackson', version: '0.10.0'
 }
