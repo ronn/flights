@@ -1,8 +1,7 @@
 package com.ryan.flights.infrastructure.acl.schedules.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.util.List;
+import io.vavr.collection.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Day {

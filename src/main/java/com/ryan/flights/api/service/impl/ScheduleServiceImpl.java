@@ -6,16 +6,13 @@ import com.ryan.flights.infrastructure.acl.schedules.ScheduleConsumer;
 import com.ryan.flights.infrastructure.acl.schedules.model.Day;
 import com.ryan.flights.infrastructure.acl.schedules.model.Flight;
 import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
+import io.vavr.collection.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -31,10 +28,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleConsumer.getSchedule(departureAirport, arrivalAirport, departureDateTime);
     }
 
-    public Stream<Day> getValidDaysFirstLeg(Schedule schedule, LocalDateTime departure) {
+    public io.vavr.collection.List<Day> getValidDaysFirstLeg(Schedule schedule, LocalDateTime departure) {
         return schedule
                 .getDays()
-                .stream()
                 .filter(day -> isDepartureDay(day, departure))
          ;
     }
@@ -42,10 +38,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<Day> getValidDaysSecondLeg(Schedule schedule, Leg firstLeg, LocalDateTime arrivalDateTime) {
         return schedule
                 .getDays()
-                .stream()
                 .filter(day -> isDepartureDay(day, firstLeg.getArrivalDateTime()))
-                .filter(day -> getValidDaySecondLeg(day, firstLeg.getArrivalDateTime().toLocalTime(), arrivalDateTime.toLocalTime()))
-                .collect(toList());
+                .filter(day -> getValidDaySecondLeg(day, firstLeg.getArrivalDateTime().toLocalTime(), arrivalDateTime.toLocalTime()));
     }
 
     private Boolean isDepartureDay(Day day, LocalDateTime arrivalDateTime) {
@@ -54,6 +48,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private boolean getValidDaySecondLeg(Day day, LocalTime arrivalDateTimeFirstLeg, LocalTime arrivalEntireTrip) {
         return day.getFlights()
+                .asJava()
                 .stream()
                 .anyMatch(flight -> getValidFlightByArrivalTime(flight, arrivalDateTimeFirstLeg, arrivalEntireTrip));
     }

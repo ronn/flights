@@ -2,14 +2,13 @@ package com.ryan.flights.infrastructure.acl;
 
 import com.ryan.flights.infrastructure.acl.routes.model.Route;
 import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
+import io.vavr.collection.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 @Service
 public class ConsumerService {

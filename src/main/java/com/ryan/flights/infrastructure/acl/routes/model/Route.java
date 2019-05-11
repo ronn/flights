@@ -1,9 +1,7 @@
 package com.ryan.flights.infrastructure.acl.routes.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.util.ArrayList;
-import java.util.List;
+import io.vavr.collection.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Route {
@@ -15,8 +13,8 @@ public class Route {
     private Boolean seasonalRoute;
     private String operator;
     private String group;
-    private List<String> similarArrivalAirportCodes = new ArrayList<>();
-    private List<String> tags = new ArrayList<>();
+    private List<String> similarArrivalAirportCodes = List.empty();
+    private List<String> tags = List.empty();
 
     public Route() {
     }

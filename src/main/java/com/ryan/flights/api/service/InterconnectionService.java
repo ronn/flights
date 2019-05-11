@@ -1,8 +1,7 @@
 package com.ryan.flights.api.service;
 
 import com.ryan.flights.api.model.Interconnection;
-
-import java.util.List;
+import io.vavr.collection.List;
 
 public interface InterconnectionService {
 

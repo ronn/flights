@@ -1,6 +1,6 @@
 package com.ryan.flights.api.model;
 
-import java.util.List;
+import io.vavr.collection.List;
 
 public class Interconnection {
 

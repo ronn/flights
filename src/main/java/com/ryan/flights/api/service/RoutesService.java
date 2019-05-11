@@ -2,8 +2,7 @@ package com.ryan.flights.api.service;
 
 import com.ryan.flights.api.model.Leg;
 import com.ryan.flights.infrastructure.acl.routes.model.Route;
-
-import java.util.List;
+import io.vavr.collection.List;
 
 public interface RoutesService {
 
