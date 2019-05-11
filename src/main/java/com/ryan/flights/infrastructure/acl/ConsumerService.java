@@ -3,6 +3,7 @@ package com.ryan.flights.infrastructure.acl;
 import com.ryan.flights.infrastructure.acl.routes.model.Route;
 import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
 import io.vavr.collection.List;
+import io.vavr.control.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
@@ -43,13 +44,13 @@ public class ConsumerService {
                 ).getBody();
     }
 
-    public Schedule getSchedule(String url){
-        return getRestTemplate()
+    public Option<Schedule> getSchedule(String url){
+        return Option.of(getRestTemplate()
                 .exchange(
                         url,
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<Schedule>() {}
-                ).getBody();
+                ).getBody());
     }
 }
