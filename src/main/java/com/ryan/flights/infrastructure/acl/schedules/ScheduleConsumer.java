@@ -5,6 +5,7 @@ import com.ryan.flights.infrastructure.acl.schedules.model.Schedule;
 import io.vavr.control.Option;
 import io.vavr.control.Try;
 import org.apache.log4j.Logger;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -24,9 +25,8 @@ public class ScheduleConsumer {
         this.consumerService = consumerService;
     }
 
+    @Cacheable("schedules")
     public Option<Schedule> getSchedule(String departure, String arrival, LocalDateTime departureDateTime){
-
-
         return Try.of(() -> consumerService.getSchedule(getUrlSche(departure, arrival, departureDateTime)))
                 .recover(exeption -> Match(exeption).of(
                         Case($(instanceOf(HttpClientErrorException.class)), () -> manageExeption("Schedule for " + departure + " -> " + arrival + " Not found")),
