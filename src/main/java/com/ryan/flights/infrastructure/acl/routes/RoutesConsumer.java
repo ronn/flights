@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class RoutesConsumer {
 
