@@ -48,9 +48,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private boolean getValidDaySecondLeg(Day day, LocalTime arrivalDateTimeFirstLeg, LocalTime arrivalEntireTrip) {
         return day.getFlights()
-                .asJava()
-                .stream()
-                .anyMatch(flight -> getValidFlightByArrivalTime(flight, arrivalDateTimeFirstLeg, arrivalEntireTrip));
+                .exists(flight -> getValidFlightByArrivalTime(flight, arrivalDateTimeFirstLeg, arrivalEntireTrip));
     }
 
     private boolean getValidFlightByArrivalTime(Flight flight, LocalTime arrivalTimeFirstLeg, LocalTime arrivalEntireTrip) {

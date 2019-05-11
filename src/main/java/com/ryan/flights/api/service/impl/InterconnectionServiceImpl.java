@@ -82,9 +82,7 @@ public class InterconnectionServiceImpl implements InterconnectionService{
 
     private Boolean legHasAValidRoute(Leg firstLeg, String arrivalAirport, List<Route> validRoutes) {
         return routesService.getSecondLegsRoutes(validRoutes, firstLeg.getArrivalAirport(), arrivalAirport)
-                .asJava()
-                .stream()
-                .anyMatch(routes -> routesService.routeMatchesDepAndArr(routes, firstLeg, arrivalAirport));
+                .exists(routes -> routesService.routeMatchesDepAndArr(routes, firstLeg, arrivalAirport));
     }
 
     private List<Leg> getFirstLegs(Route route, LocalDateTime departureDateTime, LocalDateTime arrivalDateTime) {
